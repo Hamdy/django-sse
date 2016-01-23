@@ -1,0 +1,39 @@
+{% load staticfiles %}
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Basic SSE Example</title>
+</head>
+<body>
+<pre id="x">Initializing...</pre>
+<pre id="time"></pre>
+<script src="{% static 'jquery.js' %}"></script>
+<script>
+$(document).ready(function(){
+	var es = new EventSource("/sse");
+	es.onmessage = function(e){
+		console.log('message event triggered')
+		$('#time').text(e.data)
+	};
+	es.onopen = function(e){
+		//e.target.readyState == 1
+		console.log("Connected")
+	};
+	// onerror is executed everytime not only on errors
+	es.onerror = function (event){
+		var connectionState = event.target.readyState;
+		
+		if(connectionState == 0)
+			console.log("Connecting .. ")
+		else if(connectionState == 2)
+			console.log("Bad URL -- can't connect")
+			
+				
+	};
+});
+
+
+</script>
+</body>
+</html>
